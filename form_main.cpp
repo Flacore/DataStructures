@@ -65,18 +65,14 @@ namespace ui
 #pragma region registration
 		factory->registerPrototype(structures::StructureADS::adsVECTOR, new structures::Vector(10));
 
-		//TODO 02: Array: register prototype
-		//factory->registerPrototype(structures::StructureADS::adsARRAY, new structures::Array<data::DataType>(10));
+		factory->registerPrototype(structures::StructureADS::adsARRAY, new structures::Array<data::DataType>(10));
 
-		//TODO 03: ArrayList: register prototype
-		//factory->registerPrototype(structures::StructureADS::adsLIST_ARRAY, new structures::ArrayList<data::DataType>());
+		factory->registerPrototype(structures::StructureADS::adsLIST_ARRAY, new structures::ArrayList<data::DataType>());
 
-		//TODO 04: LinkedList: register prototype
-		//factory->registerPrototype(structures::StructureADS::adsLIST_LINKED, new structures::LinkedList<data::DataType>());
+		factory->registerPrototype(structures::StructureADS::adsLIST_LINKED, new structures::LinkedList<data::DataType>());
 
-		//TODO 05: Stack: register prototype
-		//factory->registerPrototype(structures::StructureADS::adsSTACK_ARRAY, new structures::ImplicitStack<data::DataType>());
-		//factory->registerPrototype(structures::StructureADS::adsSTACK_LIST, new structures::ExplicitStack<data::DataType>());
+		factory->registerPrototype(structures::StructureADS::adsSTACK_ARRAY, new structures::ImplicitStack<data::DataType>());
+		factory->registerPrototype(structures::StructureADS::adsSTACK_LIST, new structures::ExplicitStack<data::DataType>());
 
 		//TODO 05: Queue: register prototype
 		//factory->registerPrototype(structures::StructureADS::adsQUEUE_ARRAY, new structures::ImplicitQueue<data::DataType>());

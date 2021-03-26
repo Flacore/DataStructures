@@ -429,7 +429,7 @@ namespace structures
 	template<typename T>
 	inline bool LinkedList<T>::LinkedListIterator::operator!=(const Iterator<T>& other)
 	{
-		return position_ != dynamic_cast<const LinkedListIterator&>(other).position_;
+		return position_ != dynamic_cast<const LinkedListIterator&>(other).position_ ;
 	}
 
 	template<typename T>

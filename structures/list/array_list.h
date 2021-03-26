@@ -315,13 +315,14 @@ namespace structures
 	inline Iterator<T>& ArrayList<T>::ArrayListIterator::operator=(const Iterator<T>& other)
 	{
 		position_ = dynamic_cast<const ArrayListIterator&>(other).position_;
+		arrayList_ = dynamic_cast<const ArrayListIterator&>(other).arrayList_;
 		return *this;
 	}
 
 	template<typename T>
 	inline bool ArrayList<T>::ArrayListIterator::operator!=(const Iterator<T>& other)
 	{
-		return position_ != dynamic_cast<const ArrayListIterator&>(other).position_;
+		return position_ != dynamic_cast<const ArrayListIterator&>(other).position_ || arrayList_ != dynamic_cast<const ArrayListIterator&>(other).arrayList_;
 	}
 
 	template<typename T>
