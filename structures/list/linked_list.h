@@ -302,7 +302,7 @@ namespace structures
 			}
 			else 
 			{
-				LinkedListItem<T>* prevLLI = new LinkedListItem<T>(data-1);
+				LinkedListItem<T>* prevLLI = getItemAtIndex(index - 1);
 				LinkedListItem<T>* newLLI = new LinkedListItem<T>(data);
 				newLLI->setNext(prevLLI->getNext());
 				prevLLI->setNext(newLLI);
@@ -346,6 +346,7 @@ namespace structures
 				last_ = prevLLI;
 			}
 		}
+		size_--;
 		return value;
 	}
 

@@ -33,7 +33,7 @@ namespace structures {
 	{
 		free(memory_);
 		memory_ = nullptr;
-		size_ =  0;
+		size_ = 0;
 	}
 
 	Structure* Vector::clone() const
