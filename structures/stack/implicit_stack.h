@@ -84,7 +84,7 @@ namespace structures
 	ImplicitStack<T>::~ImplicitStack()
 	{
 		delete list_;
-		list = nullptr;
+		list_ = nullptr;
 	}
 
 	template<typename T>
@@ -101,7 +101,7 @@ namespace structures
 	inline ImplicitStack<T>& ImplicitStack<T>::operator=(const ImplicitStack<T>& other)
 	{
 		if(this != &other)
-			*list_ = other.list_;
+			*list_ = *other.list_;
 		return *this;
 	}
 

@@ -93,7 +93,9 @@ namespace structures
 	template<typename T>
 	inline PriorityQueueList<T>::~PriorityQueueList()
 	{
-		//TODO 06: PriorityQueueList
+		clear();
+		delete list_;
+		list_ = nullptr;
 	}
 
 	template<typename T>
@@ -109,56 +111,75 @@ namespace structures
 	template<typename T>
 	inline PriorityQueueList<T>& PriorityQueueList<T>::operator=(const PriorityQueueList<T>& other)
 	{
-		//TODO 06: PriorityQueueList
-		throw std::exception("PriorityQueueList<T>::operator=: Not implemented yet.");
+		if (this != &other)
+		{
+			clear();
+			for (PriorityQueueItem<T>* item : *other.list_) {
+				list_->add(new PriorityQueueItem<T>(*item));
+			}
+		}
+		return *this;
 	}
 
 	template<typename T>
 	inline size_t PriorityQueueList<T>::size() const
 	{
-		//TODO 06: PriorityQueueList
-		throw std::exception("PriorityQueueList<T>::size: Not implemented yet.");
+		return list_->size();
 	}
 
 	template<typename T>
 	inline void PriorityQueueList<T>::clear()
 	{
-		//TODO 06: PriorityQueueList
-		throw std::exception("PriorityQueueList<T>::clear: Not implemented yet.");
+		for (PriorityQueueItem<T>* item : *list_) {
+			delete item;
+		}
+		list_->clear();
 	}
 
 	template<typename T>
 	inline int PriorityQueueList<T>::indexOfPeek() const
 	{
-		//TODO 06: PriorityQueueList
-		throw std::exception("PriorityQueueList<T>::indexOfPeek: Not implemented yet.");
+		if (list_->isEmpty()) {
+			throw std::logic_error("Priority queue is empty");
+		}
+		int priorityBest = INT_MAX;
+		int indexBest = -1;
+		int indexCurrent = 0;
+
+		for (PriorityQueueItem<T>* item : *list_) {
+			if (item->getPriority() < priorityBest) {
+				priorityBest = (item->getPriority());
+				indexBest = indexCurrent;
+			}
+			indexCurrent++;
+		}
+		return indexBest;
 	}
 
 	template<typename T>
 	inline T PriorityQueueList<T>::pop()
 	{
-		//TODO 06: PriorityQueueList
-		throw std::exception("PriorityQueueList<T>::pop: Not implemented yet.");
+		PriorityQueueItem<T>* item = list_->removeAt(indexOfPeek());
+		T result = item->accessData();
+		delete item;
+		return result;
 	}
 
 	template<typename T>
 	inline T & PriorityQueueList<T>::peek()
 	{
-		//TODO 06: PriorityQueueList
-		throw std::exception("PriorityQueueList<T>::peek: Not implemented yet.");
+		return (*list_)[indexOfPeek()]->accessData();
 	}
 
 	template<typename T>
 	inline const T PriorityQueueList<T>::peek() const
 	{
-		//TODO 06: PriorityQueueList
-		throw std::exception("PriorityQueueList<T>::peek: Not implemented yet.");
+		return (*list_)[indexOfPeek()]->accessData();
 	}
 
 	template<typename T>
 	inline int PriorityQueueList<T>::peekPriority() const
 	{
-		//TODO 06: PriorityQueueList
-		throw std::exception("PriorityQueueList<T>::peekPriority: Not implemented yet.");
+		return (*list_)[indexOfPeek()]->getPriority();
 	}
 }

@@ -106,7 +106,10 @@ namespace structures
 	template<typename T>
 	ImplicitQueue<T>::~ImplicitQueue()
 	{
-		//TODO 05: ImplicitQueue
+		clear();
+
+		delete array_;
+		array_ = nullptr;
 	}
 
 	template<typename T>
@@ -122,8 +125,13 @@ namespace structures
 	template<typename T>
 	inline ImplicitQueue<T>& ImplicitQueue<T>::operator=(const ImplicitQueue<T>& other)
 	{
-		//TODO 05: ImplicitQueue
-		throw std::exception("ImplicitQueue<T>::operator=: Not implemented yet.");
+		if (this != &other)
+		{
+			*array_ = *other.array_;
+			startIndex_ = other.startIndex_;
+			size_ = other.size_;
+		}
+		return *this;
 	}
 
 	template<typename T>
@@ -135,43 +143,71 @@ namespace structures
 	template<typename T>
 	size_t ImplicitQueue<T>::size() const
 	{
-		//TODO 05: ImplicitQueue
-		throw std::exception("ImplicitQueue<T>::size: Not implemented yet.");
+		return size_;
 	}
 
 	template<typename T>
 	inline void ImplicitQueue<T>::clear()
 	{
-		//TODO 05: ImplicitQueue
-		throw std::exception("ImplicitQueue<T>::clear: Not implemented yet.");
+		startIndex_ = 0;
+		size_ = 0;
 	}
 
 	template<typename T>
 	inline void ImplicitQueue<T>::push(const T& data)
 	{
-		//TODO 05: ImplicitQueue
-		throw std::exception("ImplicitQueue<T>::push: Not implemented yet.");
-	}
+		size_t capacity = array_->size();
 
+		if (size_ < capacity)
+		{
+			(*array_)[static_cast<int>((startIndex_ + size_) % capacity)] = data;
+			size_++;
+		}
+		else
+		{
+			throw std::out_of_range("ImplicitQueue<T>::push: Queue is full.");
+		}
+	}
 
 	template<typename T>
 	inline T ImplicitQueue<T>::pop()
 	{
-		//TODO 05: ImplicitQueue
-		throw std::exception("ImplicitQueue<T>::pop: Not implemented yet.");
+		if (size_ > 0)
+		{
+			size_--;
+			T& pomData = (*array_)[startIndex_];
+			startIndex_ = ++startIndex_ % array_->size();
+			return pomData;
+		}
+		else
+		{
+			throw std::out_of_range("ImplicitQueue<T>::pop: Queue is empty.");
+		}
 	}
 
 	template<typename T>
 	inline T& ImplicitQueue<T>::peek()
 	{
-		//TODO 05: ImplicitQueue
-		throw std::exception("ImplicitQueue<T>::peek: Not implemented yet.");
+		if (size_ > 0)
+		{
+			return (*array_)[startIndex_];
+		}
+		else
+		{
+			throw std::out_of_range("ImplicitQueue<T>::peek: Queue is empty.");
+		}
 	}
 
 	template<typename T>
 	inline const T ImplicitQueue<T>::peek() const
 	{
-		//TODO 05: ImplicitQueue
-		throw std::exception("ImplicitQueue<T>::peek: Not implemented yet.");
+		if (size_ > 0)
+		{
+			return (*array_)[startIndex_];
+		}
+		else
+		{
+			throw std::out_of_range("ImplicitQueue<T>::peek: Queue is empty.");
+		}
 	}
 }

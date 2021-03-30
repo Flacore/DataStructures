@@ -100,7 +100,9 @@ namespace structures
 	template<typename T>
 	inline ExplicitStack<T>& ExplicitStack<T>::operator=(const ExplicitStack<T>& other)
 	{
-		list_ = other.list_;
+		if (this != &other)
+			list_ = other.list_;
+		return *this;
 	}
 
 	template<typename T>
@@ -112,7 +114,7 @@ namespace structures
 	template<typename T>
 	size_t ExplicitStack<T>::size() const
 	{
-		list_->size();
+		return list_->size();
 	}
 
 	template<typename T>

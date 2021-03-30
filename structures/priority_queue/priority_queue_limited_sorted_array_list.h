@@ -14,6 +14,9 @@ namespace structures
 		/// <summary> Konstruktor. </summary>
 		PriorityQueueLimitedSortedArrayList();
 
+		//Nastavovanie kapacity
+		PriorityQueueLimitedSortedArrayList(const int tmp);
+
 		/// <summary> Kopirovaci konstruktor. </summary>
 		/// <param name = "other"> Prioritny front implementovany utriednym ArrayList-om s obmedzenou kapacitou, z ktoreho sa prevezmu vlastnosti. </param>
 		PriorityQueueLimitedSortedArrayList(const PriorityQueueLimitedSortedArrayList<T>& other);
@@ -39,7 +42,7 @@ namespace structures
 		/// <param name = "data"> Vkladany prvok. </param>
 		/// <exception cref="std::logic_error"> Vyhodena, ak je prioritny front plny. </exception>  
 		void push(const int priority, const T& data) override;
-		
+
 		/// <summary>
 		///  Vlozi prvok s danou prioritou do prioritneho frontu implementovaneho utriednym ArrayList-om s obmedzenou kapacitou.
 		///  V pripade, ze je prioritny front plny, odstrani polozku s najmensou prioritou z prioritneho frontu a vrati smernik na nu. 
@@ -76,6 +79,13 @@ namespace structures
 	}
 
 	template<typename T>
+	PriorityQueueLimitedSortedArrayList<T>::PriorityQueueLimitedSortedArrayList(const int tmp) :
+		PriorityQueueSortedArrayList<T>(),
+		capacity_(tmp)
+	{
+	}
+
+	template<typename T>
 	PriorityQueueLimitedSortedArrayList<T>::PriorityQueueLimitedSortedArrayList(const PriorityQueueLimitedSortedArrayList<T>& other) :
 		PriorityQueueSortedArrayList<T>(other),
 		capacity_(other.capacity_)
@@ -97,35 +107,71 @@ namespace structures
 	template<typename T>
 	inline PriorityQueueLimitedSortedArrayList<T>& PriorityQueueLimitedSortedArrayList<T>::operator=(const PriorityQueueLimitedSortedArrayList<T>& other)
 	{
-		//TODO 06: PriorityQueueLimitedSortedArrayList
-		throw std::exception("PriorityQueueLimitedSortedArrayList<T>::operator=: Not implemented yet.");
+		if (this == &other) {
+			return *this;
+		}
+		this->list_->clear();
+		capacity_ = other.capacity_;
+		for (PriorityQueueItem<T>* item : *other.list_) {
+			this->list_->add(new PriorityQueueItem<T>(*item));
+		}
+		return *this;
 	}
 
 	template<typename T>
-	void PriorityQueueLimitedSortedArrayList<T>::push(const int priority, const T & data)
+	void PriorityQueueLimitedSortedArrayList<T>::push(const int priority, const T& data)
 	{
-		//TODO 06: PriorityQueueLimitedSortedArrayList
-		throw std::exception("PriorityQueueLimitedSortedArrayList<T>::push: Not implemented yet.");
+		if (this->list_->size() < capacity_)
+			this->list_->add(new PriorityQueueItem<T>(priority, data));
+		else
+			throw std::logic_error("Queue is full!");
 	}
 
 	template<typename T>
-	inline PriorityQueueItem<T>* PriorityQueueLimitedSortedArrayList<T>::pushAndRemove(const int priority, const T & data)
-	{
-		//TODO 06: PriorityQueueLimitedSortedArrayList
-		throw std::exception("PriorityQueueLimitedSortedArrayList<T>::pushAndRemove: Not implemented yet.");
+	inline PriorityQueueItem<T>* PriorityQueueLimitedSortedArrayList<T>::pushAndRemove(const int priority, const T& data) {
+		PriorityQueueItem<T>* output;
+		int priority_ = minPriority();
+		if (priority < minPriority() || this->list_->size() < capacity_)
+			push(priority, data);
+		else
+			return new PriorityQueueItem<T>(priority, data);
+		if (this->list_->size() > capacity_) {
+			for (PriorityQueueItem<T>* item : *this->list_) {
+				if (item->getPriority() == priority_) {
+					output = item;
+					this->list_->tryRemove(item);
+					return output;
+				}
+			}
+			return nullptr;
+		}
+		else
+			return nullptr;
 	}
 
 	template<typename T>
 	inline int PriorityQueueLimitedSortedArrayList<T>::minPriority() const
 	{
-		//TODO 06: PriorityQueueLimitedSortedArrayList
-		throw std::exception("PriorityQueueLimitedSortedArrayList<T>::minPriority: Not implemented yet.");
+		if (this->list_->size() == 0)
+			return 0;
+		int priority = (*this->list_)[0]->getPriority();
+		for (PriorityQueueItem<T>* item : *this->list_) {
+			if (item->getPriority() > priority)
+				priority = item->getPriority();
+		}
+		return priority;
 	}
 
 	template<typename T>
 	inline bool PriorityQueueLimitedSortedArrayList<T>::trySetCapacity(size_t capacity)
 	{
-		//TODO 06: PriorityQueueLimitedSortedArrayList
-		throw std::exception("PriorityQueueLimitedSortedArrayList<T>::trySetCapacity: Not implemented yet.");
+		if (capacity == this->capacity_)
+			return false;
+		if (capacity < this->list_->size())
+			return false;
+		else {
+			capacity_ = capacity;
+			return true;
+		}
 	}
 }

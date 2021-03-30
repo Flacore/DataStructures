@@ -1,5 +1,7 @@
 #pragma once
 
+#define DEFAULT_MIN 4
+
 #include "priority_queue.h"
 #include "priority_queue_limited_sorted_array_list.h"
 #include "../list/linked_list.h"
@@ -16,8 +18,10 @@ namespace structures
 	public:
 		/// <summary> Konstruktor. </summary>
 		PriorityQueueTwoLists();
-
+		PriorityQueueTwoLists(const int tmp);
 		PriorityQueueTwoLists(const PriorityQueueTwoLists<T>& other);
+		///Move constructor
+		PriorityQueueTwoLists(const PriorityQueueTwoLists<T>&& other);
 		~PriorityQueueTwoLists();
 
 		Structure* clone() const override;
@@ -32,6 +36,9 @@ namespace structures
 		/// <returns> Adresa, na ktorej sa tento prioritny front nachadza po priradeni. </returns>
 		PriorityQueueTwoLists<T>& operator=(const PriorityQueueTwoLists<T>& other);
 
+		///Move semantika
+		PriorityQueueTwoLists<T>& operator=(const PriorityQueueTwoLists<T>&& other);
+
 		/// <summary> Vrati pocet prvkov v prioritnom fronte implementovanom dvojzoznamom. </summary>
 		/// <returns> Pocet prvkov v prioritnom fronte implementovanom dvojzoznamom. </returns>
 		size_t size() const override;
@@ -40,6 +47,9 @@ namespace structures
 		void clear() override;
 
 		void push(const int priority, const T& data) override;
+
+		void setCapacityOfShortlist(const int size_);
+
 
 		/// <summary> Odstrani prvok s najvacsou prioritou z prioritneho frontu implementovaneho dvojzoznamom. </summary>
 		/// <returns> Odstraneny prvok. </returns>
@@ -60,7 +70,7 @@ namespace structures
 		/// <returns> Priorita prvku s najvacsou prioritou. </returns>
 		/// <exception cref="std::logic_error"> Vyhodena, ak je prioritny front implementovany dvojzoznamom prazdny. </exception>  
 		int peekPriority() const override;
-	
+
 	private:
 		/// <summary> Smernik na prioritny front ako implementovany utriednym ArrayList-om s obmedzenou kapacitou . </summary>
 		/// <remarks> Z pohladu dvojzoznamu sa jedna o kratsi utriedeny zoznam. </remarks>
@@ -78,6 +88,13 @@ namespace structures
 	}
 
 	template<typename T>
+	PriorityQueueTwoLists<T>::PriorityQueueTwoLists(const int tmp) :
+		shortList_(new PriorityQueueLimitedSortedArrayList<T>(tmp)),
+		longList_(new LinkedList<PriorityQueueItem<T>*>())
+	{
+	}
+
+	template<typename T>
 	PriorityQueueTwoLists<T>::PriorityQueueTwoLists(const PriorityQueueTwoLists<T>& other) :
 		PriorityQueueTwoLists<T>()
 	{
@@ -85,13 +102,26 @@ namespace structures
 	}
 
 	template<typename T>
-	PriorityQueueTwoLists<T>::~PriorityQueueTwoLists()
+	PriorityQueueTwoLists<T>::PriorityQueueTwoLists(const PriorityQueueTwoLists<T>&& other)
 	{
-		//TODO 06: PriorityQueueTwoLists
+		this->shortList_ = other.shortList_;
+		this->longList_ = other.longList_;
+
+		other.shortList_ = nullptr;
+		other.longList_ = nullptr;
 	}
 
 	template<typename T>
-	Structure * PriorityQueueTwoLists<T>::clone() const
+	PriorityQueueTwoLists<T>::~PriorityQueueTwoLists()
+	{
+		delete shortList_;
+		shortList_ = nullptr;
+		delete longList_;
+		longList_ = nullptr;
+	}
+
+	template<typename T>
+	Structure* PriorityQueueTwoLists<T>::clone() const
 	{
 		return new PriorityQueueTwoLists<T>(*this);
 	}
@@ -105,56 +135,100 @@ namespace structures
 	template<typename T>
 	PriorityQueueTwoLists<T>& PriorityQueueTwoLists<T>::operator=(const PriorityQueueTwoLists<T>& other)
 	{
-		//TODO 06: PriorityQueueTwoLists
-		throw std::exception("PriorityQueueTwoLists<T>::operator=: Not implemented yet.");
+		if (this == &other)
+			return *this;
+		shortList_ = other.shortList_;
+		longList_ = other.longList_;
+		return *this;
+	}
+
+	//Move priradenie
+	template<typename T>
+	PriorityQueueTwoLists<T>& PriorityQueueTwoLists<T>::operator=(const PriorityQueueTwoLists<T>&& other) {
+		if (this != other) {
+			delete shortList_;
+			delete longList_;
+
+			this->shortList_ = other.shortList_;
+			this->longList_ = other.longList_;
+
+			other.shortList_ = nullptr;
+			other.longList_ = nullptr;
+		}
+		return *this;
 	}
 
 	template<typename T>
 	size_t PriorityQueueTwoLists<T>::size() const
 	{
-		//TODO 06: PriorityQueueTwoLists
-		throw std::exception("PriorityQueueTwoLists<T>::size: Not implemented yet.");
+		return longList_->size() + shortList_->size();
 	}
 
 	template<typename T>
 	void PriorityQueueTwoLists<T>::clear()
 	{
-		//TODO 06: PriorityQueueTwoLists
-		throw std::exception("PriorityQueueTwoLists<T>::clear: Not implemented yet.");
+		shortList_->clear();
+		longList_->clear();
 	}
 
 	template<typename T>
-	void PriorityQueueTwoLists<T>::push(const int priority, const T & data)
+	void PriorityQueueTwoLists<T>::push(const int priority, const T& data)
 	{
-		//TODO 06: PriorityQueueTwoLists
-		throw std::exception("PriorityQueueTwoLists<T>::push: Not implemented yet.");
+		if (shortList_->minPriority() < priority || longList_->size() == 0) {
+			PriorityQueueItem<T>* item = shortList_->pushAndRemove(priority, data);
+			if (item != nullptr) {
+				longList_->add(item);
+			}
+		}
+		else {
+			PriorityQueueItem<T>* item = new PriorityQueueItem<T>(priority, data);
+			longList_->add(item);
+		}
+	}
+
+	template<typename T>
+	inline void PriorityQueueTwoLists<T>::setCapacityOfShortlist(const int size_)
+	{
+		shortList_->trySetCapacity(size_);
 	}
 
 	template<typename T>
 	T PriorityQueueTwoLists<T>::pop()
 	{
-		//TODO 06: PriorityQueueTwoLists
-		throw std::exception("PriorityQueueTwoLists<T>::pop: Not implemented yet.");
+		T item_ = 0;
+		if (!shortList_->isEmpty()) {
+			item_ = shortList_->pop();
+			if (shortList_->isEmpty() && longList_->size() != 0) {
+				if (sqrt(longList_->size()) > DEFAULT_MIN) {
+					bool returnVal = shortList_->trySetCapacity(sqrt(longList_->size()));
+					LinkedList<PriorityQueueItem<T>*>* queue = new LinkedList<PriorityQueueItem<T>*>();
+					for (PriorityQueueItem<T>* item : *longList_) {
+						queue->add(shortList_->pushAndRemove(item->getPriority(), item->accessData()));
+					}
+					delete longList_;
+					longList_ = queue;
+					delete queue;
+				}
+			}
+		}
+		return item_;
 	}
 
 	template<typename T>
-	T & PriorityQueueTwoLists<T>::peek()
+	T& PriorityQueueTwoLists<T>::peek()
 	{
-		//TODO 06: PriorityQueueTwoLists
-		throw std::exception("PriorityQueueTwoLists<T>::peek: Not implemented yet.");
+		return shortList_->peek();
 	}
 
 	template<typename T>
 	const T PriorityQueueTwoLists<T>::peek() const
 	{
-		//TODO 06: PriorityQueueTwoLists
-		throw std::exception("PriorityQueueTwoLists<T>::peek: Not implemented yet.");
+		return shortList_->peek();
 	}
 
 	template<typename T>
 	int PriorityQueueTwoLists<T>::peekPriority() const
 	{
-		//TODO 06: PriorityQueueTwoLists
-		throw std::exception("PriorityQueueTwoLists<T>::peekPriority: Not implemented yet.");
+		return shortList_->peekPriority();
 	}
 }

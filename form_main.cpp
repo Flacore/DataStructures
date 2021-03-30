@@ -74,9 +74,8 @@ namespace ui
 		factory->registerPrototype(structures::StructureADS::adsSTACK_ARRAY, new structures::ImplicitStack<data::DataType>());
 		factory->registerPrototype(structures::StructureADS::adsSTACK_LIST, new structures::ExplicitStack<data::DataType>());
 
-		//TODO 05: Queue: register prototype
-		//factory->registerPrototype(structures::StructureADS::adsQUEUE_ARRAY, new structures::ImplicitQueue<data::DataType>());
-		//factory->registerPrototype(structures::StructureADS::adsQUEUE_LIST, new structures::ExplicitQueue<data::DataType>());
+		factory->registerPrototype(structures::StructureADS::adsQUEUE_ARRAY, new structures::ImplicitQueue<data::DataType>());
+		factory->registerPrototype(structures::StructureADS::adsQUEUE_LIST, new structures::ExplicitQueue<data::DataType>());
 
 		//TODO 06: PriorityQueue: register prototype
 		//factory->registerPrototype(structures::StructureADS::adsPRIORITY_QUEUE_ARRAY_LIST_SORTED, new structures::PriorityQueueSortedArrayList<data::DataType>());
