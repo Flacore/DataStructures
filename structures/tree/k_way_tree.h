@@ -154,7 +154,7 @@ namespace structures
 	inline TreeNode<T>* KWayTreeNode<T, K>::replaceSon(TreeNode<T>* son, int order)
 	{
 		TreeNode<T>* oldSon = (*children_)[order];
-		(*children_)[order] = *dynamic_cast<KWayTree<T,K>*>(son);
+		replaceSon(son, order);
 		if (son != nullptr) {
 			son->setParent(this);
 		}

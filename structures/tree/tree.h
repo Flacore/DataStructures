@@ -424,26 +424,26 @@ namespace structures
 	template<typename T>
 	inline Iterator<T>& Tree<T>::TreeIterator::operator=(const Iterator<T>& other)
 	{
-		*path_ = -dynamic_cast<const TreeIterator &>(other).path_;
+		*path_ = *dynamic_cast<const TreeIterator &>(other).path_;
 		return *this;
 	}
 
 	template<typename T>
 	inline bool Tree<T>::TreeIterator::operator!=(const Iterator<T>& other)
 	{
-		return *path_ != -dynamic_cast<const TreeIterator&>(other).path_;
+		return *path_ != *dynamic_cast<const TreeIterator&>(other).path_;
 	}
 
 	template<typename T>
 	inline const T Tree<T>::TreeIterator::operator*()
 	{
-		return path->front();
+		return path_->front()->accessData();
 	}
 
 	template<typename T>
 	inline Iterator<T>& Tree<T>::TreeIterator::operator++()
 	{
-		path->pop();
+		path_->pop();
 		return *this;
 	}
 
