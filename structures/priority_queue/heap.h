@@ -101,12 +101,12 @@ namespace structures
 	template<typename T>
 	void Heap<T>::push(const int priority, const T& data)
 	{
-		List_->add(new PriorityQueueItem<T>(priority, data));
+		list_->add(new PriorityQueueItem<T>(priority, data));
 
 		int indexCurrent = list_->size() - 1;
 		int indexParent = getParentIndex(indexCurrent);
 		while (indexCurrent > 0  && (*list_)[indexCurrent]->getPriority() < (*list_)[indexParent]->getPriority()) {
-			DSRoutines::swap((*list_)[indexParent],(*list_)[indexCurrent])
+			DSRoutines::swap((*list_)[indexParent], (*list_)[indexCurrent]);
 			indexCurrent = indexParent;
 			indexParent = getParentIndex(indexCurrent);
 		}
@@ -115,6 +115,7 @@ namespace structures
 	template<typename T>
 	T Heap<T>::pop()
 	{
+		int index = indexOfPeek();
 		PriorityQueueItem<T>* bestItem = (*list_)[index];
 		(*list_)[index] = (*list_)[list_->size() - 1];
 		(*list_)[list_->size() - 1] = bestItem;
@@ -123,8 +124,8 @@ namespace structures
 		int indexCurrent = 0;
 		int indexSon = getGreaterSonIndex(indexCurrent);
 		while (indexSon != -1 && (*list_)[indexCurrent]->getPriority() > (*list_)[indexSon]->getPriority()) {
-			DSRoutines::swap((*list_)[indexSon], (*list_)[indexCurrent])
-				indexCurrent = indexParent;
+			DSRoutines::swap((*list_)[indexSon], (*list_)[indexCurrent]);
+				indexCurrent = indexSon;
 			indexSon = getGreaterSonIndex(indexCurrent);
 		}
 

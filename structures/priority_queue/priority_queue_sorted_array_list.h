@@ -86,9 +86,9 @@ namespace structures
 	inline void PriorityQueueSortedArrayList<T>::push(const int priority, const T& data)
 	{
 		PriorityQueueItem<T>* item = new PriorityQueueItem<T>(priority, data);
-		for (int i = PriorityQueueItem<T>::list_->size() - 1; i >= 0; i--) {
-			if ((*PriorityQueueList<T>::list_)[i]->getPriority() >= priority) {
-				PriorityQueueList<T>::list_->insert(item, i + 1);
+		for (int i = list_->size() - 1; i >= 0; i--) {
+			if ((*list_)[i]->getPriority() >= priority) {
+				list_->insert(item, i + 1);
 				break;
 			}
 		}
@@ -100,6 +100,6 @@ namespace structures
 		if (list_->isEmpty()) {
 			throw std::logic_error("Priority queue is empty");
 		}
-		return list_->siz() -1;
+		return list_->size() - 1;
 	}
 }
