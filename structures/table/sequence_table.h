@@ -102,14 +102,15 @@ namespace structures
 	template<typename K, typename T>
 	inline SequenceTable<K, T>::~SequenceTable()
 	{
-		//TODO 09: SequenceTable
+		clear();
+		delete list_;
+		list_ = nullptr;
 	}
 
 	template<typename K, typename T>
 	inline size_t SequenceTable<K, T>::size() const
 	{
-		//TODO 09: SequenceTable
-		throw std::exception("SequenceTable<K, T>::insert: Not implemented yet.");
+		return list_->size();
 	}
 
 	template<typename K, typename T>
@@ -125,71 +126,103 @@ namespace structures
 	template<typename K, typename T>
 	inline SequenceTable<K, T>& SequenceTable<K, T>::operator=(const SequenceTable<K, T>& other)
 	{
-		//TODO 09: SequenceTable
-		throw std::exception("SequenceTable<K, T>::operator=: Not implemented yet.");
+		if (this != &other)
+		{
+			clear();
+			for (TableItem<K, T>* item : *other.list_) {
+				list_->add(new TableItem<K, T>(*item));
+			}
+		}
+		return *this;
 	}
 
 	template<typename K, typename T>
 	inline T & SequenceTable<K, T>::operator[](const K key)
 	{
-		//TODO 09: SequenceTable
-		throw std::exception("SequenceTable<K, T>::operator[]: Not implemented yet.");
+		TableItem<K, T>* item = findTableItem(key);
+		if (item != nullptr) {
+			return item->accessData();
+		}
+		else {
+			throw std::logic_error("No such key.");
+		}
 	}
 
 	template<typename K, typename T>
 	inline const T SequenceTable<K, T>::operator[](const K key) const
 	{
-		//TODO 09: SequenceTable
-		throw std::exception("SequenceTable<K, T>::operator[]: Not implemented yet.");
+		TableItem<K, T>* item = findTableItem(key);
+		if (item != nullptr) {
+			return item->accessData();
+		}
+		else {
+			throw std::logic_error("No such key.");
+		}
 	}
 
 	template<typename K, typename T>
 	inline void SequenceTable<K, T>::insert(const K & key, const T & data)
 	{
-		//TODO 09: SequenceTable
-		throw std::exception("SequenceTable<K, T>::insert: Not implemented yet.");
+		if (containsKey(key)) {
+			throw std::logic_error("Already contain this key.");
+		}
+		else {
+			list_->add(new TableItem<K,T>(key,data))
+		}
 	}
 
 	template<typename K, typename T>
 	inline T SequenceTable<K, T>::remove(const K & key)
 	{
-		//TODO 09: SequenceTable
-		throw std::exception("SequenceTable<K, T>::remove: Not implemented yet.");
+		TableItem<K, T>* tmp = findTableItem(key);
+		if (item == nullptr) {
+			throw std::logic_error("Dont find key.");
+		}
+		else {
+			list_->tryRemove(tmp);
+			T data = tmp->accessData();
+			return data;
+		}
 	}
 
 	template<typename K, typename T>
 	inline bool SequenceTable<K, T>::tryFind(const K & key, T & data)
 	{
-		//TODO 09: SequenceTable
-		throw std::exception("SequenceTable<K, T>::tryFind: Not implemented yet.");
+		TableItem<K, T>* item = findTableItem(key);
+		if (item != nullptr) {
+			data = item->accessData();
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	template<typename K, typename T>
 	inline bool SequenceTable<K, T>::containsKey(const K & key)
 	{
-		//TODO 09: SequenceTable
-		throw std::exception("SequenceTable<K, T>::containsKey: Not implemented yet.");
+		return findTableItem(key) != nullptr;
 	}
 
 	template<typename K, typename T>
 	inline void SequenceTable<K, T>::clear()
 	{
-		//TODO 09: SequenceTable
-		throw std::exception("SequenceTable<K, T>::clear: Not implemented yet.");
+		for (TableItem<K, T>* item : *list_) {
+			delete item;
+		}
+		list_->clear();
 	}
 
 	template<typename K, typename T>
 	inline Iterator<TableItem<K, T>*>* SequenceTable<K, T>::getBeginIterator() const
 	{
-		//TODO 09: SequenceTable
-		throw std::exception("SequenceTable<K, T>::getBeginIterator: Not implemented yet.");
+		return list_->getBeginIterator();
 	}
 
 	template<typename K, typename T>
 	inline Iterator<TableItem<K, T>*>* SequenceTable<K, T>::getEndIterator() const
 	{
-		//TODO 09: SequenceTable
-		throw std::exception("SequenceTable<K, T>::getEndIterator: Not implemented yet.");
+		return list_->getEndIterator();
 	}
 
 	template<typename K, typename T>
@@ -202,8 +235,11 @@ namespace structures
 	template<typename K, typename T>
 	inline TableItem<K, T>* SequenceTable<K, T>::findTableItem(const K & key) const
 	{
-		//TODO 09: SequenceTable
-		throw std::exception("SequenceTable<K, T>::findTableItem: Not implemented yet.");
+		for (TableItem<K, T>* item : *list_) {
+			if (key == item->getKey())
+				retrum item;
+		}
+		return nullptr;
 	}
 
 }
