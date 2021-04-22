@@ -167,7 +167,7 @@ namespace structures
 			throw std::logic_error("Already contain this key.");
 		}
 		else {
-			list_->add(new TableItem<K,T>(key,data))
+			list_->add(new TableItem<K, T>(key, data));
 		}
 	}
 
@@ -175,7 +175,7 @@ namespace structures
 	inline T SequenceTable<K, T>::remove(const K & key)
 	{
 		TableItem<K, T>* tmp = findTableItem(key);
-		if (item == nullptr) {
+		if (tmp == nullptr) {
 			throw std::logic_error("Dont find key.");
 		}
 		else {
@@ -237,7 +237,7 @@ namespace structures
 	{
 		for (TableItem<K, T>* item : *list_) {
 			if (key == item->getKey())
-				retrum item;
+				return item;
 		}
 		return nullptr;
 	}

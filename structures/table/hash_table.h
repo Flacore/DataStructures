@@ -154,7 +154,7 @@ namespace structures
 	};
 
 	template<typename K, typename T>
-	inline HashTable<K, T>::HashTable():
+	inline HashTable<K, T>::HashTable() :
 		Table<K, T>(),
 		data_(new Array<Table<K, T>*>(DATA_ARRAY_SIZE)),
 		size_(0)
@@ -162,7 +162,7 @@ namespace structures
 	}
 
 	template<typename K, typename T>
-	inline HashTable<K, T>::HashTable(const HashTable<K, T>& other):
+	inline HashTable<K, T>::HashTable(const HashTable<K, T>& other) :
 		HashTable()
 	{
 		*this = other;
@@ -171,11 +171,14 @@ namespace structures
 	template<typename K, typename T>
 	inline HashTable<K, T>::~HashTable()
 	{
-		//TODO 09: HashTable
+		clear();
+
+		delete data_;
+		data_ = nullptr;
 	}
 
 	template<typename K, typename T>
-	inline Structure * HashTable<K, T>::clone() const
+	inline Structure* HashTable<K, T>::clone() const
 	{
 		return new HashTable<K, T>(*this);
 	}
@@ -183,8 +186,7 @@ namespace structures
 	template<typename K, typename T>
 	inline size_t HashTable<K, T>::size() const
 	{
-		//TODO 09: HashTable
-		throw std::exception("HashTable<K, T>::size: Not implemented yet.");
+		return size_;
 	}
 
 	template<typename K, typename T>
@@ -200,57 +202,132 @@ namespace structures
 	template<typename K, typename T>
 	inline HashTable<K, T>& HashTable<K, T>::operator=(const HashTable<K, T>& other)
 	{
-		//TODO 09: HashTable
-		throw std::exception("HashTable<K, T>::operator=: Not implemented yet.");
+		if (this != &other)
+		{
+			clear();
+
+			for (TableItem<K, T>* item : other)
+			{
+				insert(item->getKey(), item->accessData());
+			}
+		}
+
+		return *this;
 	}
 
 	template<typename K, typename T>
-	inline T & HashTable<K, T>::operator[](const K key)
+	inline T& HashTable<K, T>::operator[](const K key)
 	{
-		//TODO 09: HashTable
-		throw std::exception("HashTable<K, T>::operator[]: Not implemented yet.");
+		int hash = hashFunction(key);
+
+		Table<K, T>* table = (*data_)[hash];
+
+		if (table != nullptr)
+		{
+			return (*table)[key];
+		}
+		else
+		{
+			throw std::out_of_range("Data not found!");
+		}
 	}
 
 	template<typename K, typename T>
 	inline const T HashTable<K, T>::operator[](const K key) const
 	{
-		//TODO 09: HashTable
-		throw std::exception("HashTable<K, T>::operator[]: Not implemented yet.");
+		int hash = hashFunction(key);
+
+		Table<K, T>* table = (*data_)[hash];
+
+		if (table != nullptr)
+		{
+			T data = (*table)[key];
+			return data;
+		}
+		else
+		{
+			throw std::out_of_range("Data not found!");
+		}
 	}
 
 	template<typename K, typename T>
-	inline void HashTable<K, T>::insert(const K & key, const T & data)
+	inline void HashTable<K, T>::insert(const K& key, const T& data)
 	{
-		//TODO 09: HashTable
-		throw std::exception("HashTable<K, T>::insert: Not implemented yet.");
+		int hash = hashFunction(key);
+
+		Table<K, T>* table = (*data_)[hash];
+
+		if (table == nullptr)
+		{
+			table = new LinkedTable<K, T>();
+			(*data_)[hash] = table;
+		}
+
+		table->insert(key, data);
+		size_++;
 	}
 
 	template<typename K, typename T>
-	inline T HashTable<K, T>::remove(const K & key)
+	inline T HashTable<K, T>::remove(const K& key)
 	{
-		//TODO 09: HashTable
-		throw std::exception("HashTable<K, T>::remove: Not implemented yet.");
+		int hash = hashFunction(key);
+
+		Table<K, T>* table = (*data_)[hash];
+
+		if (table != nullptr)
+		{
+			T result = table->remove(key);
+			size_--;
+
+			if (table->isEmpty())
+			{
+				delete table;
+				(*data_)[hash] = nullptr;
+			}
+
+			return result;
+		}
+		else
+		{
+			throw std::logic_error("Key not found!");
+		}
 	}
 
 	template<typename K, typename T>
-	inline bool HashTable<K, T>::tryFind(const K & key, T & data)
+	inline bool HashTable<K, T>::tryFind(const K& key, T& data)
 	{
-		//TODO 09: HashTable
-		throw std::exception("HashTable<K, T>::tryFind: Not implemented yet.");
+		int hash = hashFunction(key);
+
+		Table<K, T>* table = (*data_)[hash];
+
+		return table != nullptr ? table->tryFind(key, data) : false;
 	}
 
 	template<typename K, typename T>
-	inline bool HashTable<K, T>::containsKey(const K & key)
+	inline bool HashTable<K, T>::containsKey(const K& key)
 	{
-		//TODO 09: HashTable
-		throw std::exception("HashTable<K, T>::containsKey: Not implemented yet.");
+		int hash = hashFunction(key);
+
+		Table<K, T>* table = (*data_)[hash];
+
+		return table != nullptr ? table->containsKey(key) : false;
 	}
 
 	template<typename K, typename T>
 	inline void HashTable<K, T>::clear()
 	{
-		//TODO 09: HashTable
-		throw std::exception("HashTable<K, T>::clear: Not implemented yet.");
+		for (int i = 0; i < DATA_ARRAY_SIZE; i++)
+		{
+			Table<K, T>* table = (*data_)[i];
+
+			if (table != nullptr)
+			{
+				delete table;
+				(*data_)[i] = nullptr;
+			}
+		}
+
+		size_ = 0;
 	}
 
 	template<typename K, typename T>
@@ -266,14 +343,14 @@ namespace structures
 	}
 
 	template<typename K, typename T>
-	inline int HashTable<K, T>::hashFunction(const K & key) const
+	inline int HashTable<K, T>::hashFunction(const K& key) const
 	{
 		// Knuth Variant on Division: h(k) = k(k + 3) mod m.
 		return (key * (key + 3)) % DATA_ARRAY_SIZE;
 	}
 
 	template<typename K, typename T>
-	inline HashTable<K, T>::HashTableIterator::HashTableIterator(const HashTable<K, T>* hashTable, int position):
+	inline HashTable<K, T>::HashTableIterator::HashTableIterator(const HashTable<K, T>* hashTable, int position) :
 		Iterator<TableItem<K, T>*>(),
 		hashTable_(hashTable),
 		position_(position),
@@ -286,42 +363,66 @@ namespace structures
 	template<typename K, typename T>
 	inline HashTable<K, T>::HashTableIterator::~HashTableIterator()
 	{
-		//TODO 09: HashTable<K, T>::HashTableIterator
+		hashTable_ = nullptr;
+		position_ = 0;
+		delete iterCurr_;
+		iterCurr_ = nullptr;
 	}
 
 	template<typename K, typename T>
 	inline Iterator<TableItem<K, T>*>& HashTable<K, T>::HashTableIterator::operator=(const Iterator<TableItem<K, T>*>& other)
 	{
-		//TODO 09: HashTable<K, T>::HashTableIterator
-		throw std::exception("HashTable<K, T>::HashTableIterator::operator=: Not implemented yet.");
+		hashTable_ = dynamic_cast<const HashTableIterator&>(other).hashTable_;
+		position_ = dynamic_cast<const HashTableIterator&>(other).position_;
+		iterCurr_ = dynamic_cast<const HashTableIterator&>(other).iterCurr_;
+		return *this;
 	}
 
 	template<typename K, typename T>
 	inline bool HashTable<K, T>::HashTableIterator::operator!=(const Iterator<TableItem<K, T>*>& other)
 	{
-		//TODO 09: HashTable<K, T>::HashTableIterator
-		throw std::exception("HashTable<K, T>::HashTableIterator::operator!=: Not implemented yet.");
+		return hashTable_ != dynamic_cast<const HashTableIterator&>(other).hashTable_ ||
+			position_ != dynamic_cast<const HashTableIterator&>(other).position_ ||
+			iterCurr_ != dynamic_cast<const HashTableIterator&>(other).iterCurr_;
 	}
 
 	template<typename K, typename T>
 	inline TableItem<K, T>* const HashTable<K, T>::HashTableIterator::operator*()
 	{
-		//TODO 09: HashTable<K, T>::HashTableIterator
-		throw std::exception("HashTable<K, T>::HashTableIterator::operator*: Not implemented yet.");
+		return *(*iterCurr_);
 	}
 
 	template<typename K, typename T>
 	inline Iterator<TableItem<K, T>*>& HashTable<K, T>::HashTableIterator::operator++()
 	{
-		//TODO 09: HashTable<K, T>::HashTableIterator
-		throw std::exception("HashTable<K, T>::HashTableIterator::operator++: Not implemented yet.");
+		++(*iterCurr_);
+
+		if (!(*iterCurr_ != *iterLast_))
+		{
+			delete iterCurr_;
+			iterCurr_ = nullptr;
+			delete iterLast_;
+			iterLast_ = nullptr;
+			position_++;
+
+			movePositionInArray();
+		}
+		return *this;
 	}
 
 	template<typename K, typename T>
 	inline void HashTable<K, T>::HashTableIterator::movePositionInArray()
 	{
-		//TODO 09: HashTable<K, T>::HashTableIterator
-		throw std::exception("HashTable<K, T>::HashTableIterator::movePositionInArray: Not implemented yet.");
+		while (position_ < hashTable_->DATA_ARRAY_SIZE && (*hashTable_->data_)[position_] == nullptr)
+		{
+			position_++;
+		}
+
+		if (position_ < hashTable_->DATA_ARRAY_SIZE)
+		{
+			iterCurr_ = (*hashTable_->data_)[position_]->getBeginIterator();
+			iterLast_ = (*hashTable_->data_)[position_]->getEndIterator();
+		}
 	}
 
 }

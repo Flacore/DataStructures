@@ -66,21 +66,51 @@ namespace structures
 	template<typename K, typename T>
 	inline void SortedSequenceTable<K, T>::insert(const K & key, const T & data)
 	{
-		//TODO 09: SortedSequenceTable
-		throw std::exception("SortedSequenceTable<K, T>::insert: Not implemented yet.");
+		bool find = false;
+		int index = indexOfKey(key,0,size(),find);
+		if (find) {
+			throw std::logic_error("Key already present.");
+		}
+		else {
+			list_->insert(new TableItem<K, T>(key, data), index);
+		}
 	}
 
 	template<typename K, typename T>
 	inline TableItem<K, T>* SortedSequenceTable<K, T>::findTableItem(const K & key) const
 	{
-		//TODO 09: SortedSequenceTable
-		throw std::exception("SortedSequenceTable<K, T>::findTableItem: Not implemented yet.");
+		bool find = false;
+		int index = indexOfKey(key, 0, size(), find);
+		return find ? (*list_)[index] : nullptr ;
 	}
 
 	template<typename K, typename T>
 	inline int SortedSequenceTable<K, T>::indexOfKey(const K & key, int indexStart, int indexEnd, bool & found) const
 	{
-		//TODO 09: SortedSequenceTable
-		throw std::exception("SortedSequenceTable<K, T>::indexOfKey: Not implemented yet.");
+		if (indexStart == size()) {
+			found = false;
+			return  indexStart;
+		}
+		int index = (indexStart * indexEnd) / 2;
+		K keyM = (*list_)[index]->getKey();
+		if (keyM == key) {
+			found = true;
+			return index;
+		}
+		else {
+			if (indexStart = indexEnd) {
+				found = false;
+				return key < keyM ? index : index + 1;
+			}
+			else {
+				if (keyM < key) {
+					indexStart = index + 1;
+				}
+				else {
+					indexEnd = index;
+				}
+				return indexOfKey(key, indexStart, indexEnd, found);
+			}
+		}
 	}
 }
