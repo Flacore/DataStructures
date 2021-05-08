@@ -23,39 +23,32 @@ namespace structures
 	template<typename K, typename T>
 	inline void QuickSort<K, T>::sort(UnsortedSequenceTable<K, T>& table)
 	{
-		quick(0, table.size(), table);
+		quick(0, table.size() - 1, table);
 	}
-
 	template<typename K, typename T>
 	inline void QuickSort<K, T>::quick(int min, int max, UnsortedSequenceTable<K, T>& table)
 	{
-		T pivot = table.getItemAtIndex((min + max) / 2).getKey();
-		int lavy, pravy;
-		lavy = min;
-		pravy = max;
+		//auto pivot = table.getItemAtIndex((min + max) / 2).getKey()->getValue();
+		K pivot = table.getItemAtIndex((min + max) / 2).getKey();
+		int left = min;
+		int right = max;
 		do {
-			while (table.getItemAtIndex(lavy).getKey() < pivot) {
-				lavy++;
+			//while (table.getItemAtIndex(left).getKey()->getValue() < pivot)
+			while (table.getItemAtIndex(left).getKey() < pivot)
+				left++;
+			//while (table.getItemAtIndex(right).getKey()->getValue() > pivot)
+			while (table.getItemAtIndex(right).getKey() > pivot)
+				right--;
+			if (left <= right) {
+				table.swap(left, right);
+				left++;
+				right--;
+				notify();
 			}
-			while (table.getItemAtIndex(pravy).getKey() < pivot) {
-				pravy++;
-			}
-
-			if (lavy <= pravy) {
-				table.swap(lavy, pravy);
-				lavy++;
-				pravy--;
-			}
-			notify();
-		} while (lavy <= pravy);
-
-		if (min < pravy) {
-			quick(min, pravy, table);
-		}
-		if (lavy < max) {
-			quick(lavy, max, table);
-		}
+		} while (left <= right);
+		if (min < right)
+			quick(min, right, table);
+		if (left < max)
+			quick(left, max, table);
 	}
-
-
 }
