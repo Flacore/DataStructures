@@ -91,17 +91,12 @@ namespace ui
 		factory->registerPrototype(structures::StructureADS::adsTABLE_SEQUENCE_SORTED, new structures::SortedSequenceTable<data::KeyType, data::DataType>());
 		factory->registerPrototype(structures::StructureADS::adsTABLE_LINKED, new structures::LinkedTable<data::KeyType, data::DataType>());
 
-		//TODO 09: HashTable: register prototype
-		//factory->registerPrototype(structures::StructureADS::adsTABLE_HASH, new structures::HashTable<data::KeyType, data::DataType>());
+		factory->registerPrototype(structures::StructureADS::adsTABLE_HASH, new structures::HashTable<data::KeyType, data::DataType>());
 
-		//TODO 10: BinarySearchTree: register prototype
-		//factory->registerPrototype(structures::StructureADS::adsTABLE_BST, new structures::BinarySearchTree<data::KeyType, data::DataType>());
+		factory->registerPrototype(structures::StructureADS::adsTABLE_BST, new structures::BinarySearchTree<data::KeyType, data::DataType>());
 
-		//TODO 10: Treap: register prototype
-		//factory->registerPrototype(structures::StructureADS::adsTABLE_TREAP, new structures::Treap<data::KeyType, data::DataType>());
-
-		//TODO 11: ForwardStarGraph: register prototype
-		/*
+		factory->registerPrototype(structures::StructureADS::adsTABLE_TREAP, new structures::Treap<data::KeyType, data::DataType>());
+		
 		{
 			data::GraphDataVertex vertexData;
 			data::GraphDataEdge edgeData;
@@ -112,10 +107,7 @@ namespace ui
 
 			factory->registerPrototype(structures::StructureADS::adsGRAPH_FORWARD_STAR, graph);
 		}
-		*/
-
-		//TODO 11: BiStarGraph: register prototype
-		/*
+		
 		{
 			data::GraphDataVertex vertexData;
 			data::GraphDataEdge edgeData;
@@ -126,7 +118,7 @@ namespace ui
 
 			factory->registerPrototype(structures::StructureADS::adsGRAPH_BI_STAR, graph);
 		}
-		*/
+		
 #pragma endregion
 
 
@@ -140,8 +132,7 @@ namespace ui
 		PanelStructures::createAndIntegratePanelStructures(pnlTable, structures::StructureADT::adtTABLE);
 		PanelStructures::createAndIntegratePanelStructures(pnlGraph, structures::StructureADT::adtGRAPH);
 
-		//TODO 12: Sorting: register panel for sorting
-		//PanelSorting::createAndIntegratePanelSorting(pnlSorting);
+		PanelSorting::createAndIntegratePanelSorting(pnlSorting);
 	}
 
 	FormMain::~FormMain()

@@ -208,7 +208,7 @@ namespace structures
 	template<typename T>
 	inline bool BinaryTreeNode<T>::hasRightSon() const
 	{
-		return getRightSon() != nullptr:
+		return getRightSon() != nullptr;
 	}
 
 	template<typename T>
