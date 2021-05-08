@@ -21,8 +21,7 @@ namespace structures
 	template<typename K, typename T>
 	inline void MergeSort<K, T>::sort(UnsortedSequenceTable<K, T>& table)
 	{
-		//TODO 12: MergeSort
-		throw std::exception("MergeSort<K, T>::sort: Not implemented yet.");
+		
 	}
 
 }

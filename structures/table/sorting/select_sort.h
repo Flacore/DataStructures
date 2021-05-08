@@ -21,8 +21,16 @@ namespace structures
 	template<typename K, typename T>
 	inline void SelectSort<K, T>::sort(UnsortedSequenceTable<K, T>& table)
 	{
-		//TODO 12: SelectSort
-		throw std::exception("SelectSort<K, T>::sort: Not implemented yet.");
+		for (int n = 0; n < table.size() - 1; n++) {
+			int min = n;
+			for (int j = n + 1; j < table.size() - 1; j++) {
+				if (table.getItemAtIndex(j).getKey() < table.getItemAtIndex(min).getKey()) {
+					min = j;
+				}
+			}
+			table.swap(n, min);
+			notify();
+		}
 	}
 
 }

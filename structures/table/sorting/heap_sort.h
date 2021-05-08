@@ -21,8 +21,7 @@ namespace structures
 	template<typename K, typename T>
 	inline void HeapSort<K, T>::sort(UnsortedSequenceTable<K, T>& table)
 	{
-		//TODO 12: HeapSort
-		throw std::exception("HeapSort<K, T>::sort: Not implemented yet.");
+		
 	}
 
 }
